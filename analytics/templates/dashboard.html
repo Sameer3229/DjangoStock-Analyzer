@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card p-3">
+            <div class="metric-label">Current Price</div>
+            <div class="metric-value text-success">PKR {{ price.close|intcomma }}</div>
+            <small>Vol: {{ price.volume|intcomma }}</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card p-3">
+            <div class="metric-label">Market Cap</div>
+            <div class="metric-value">PKR {{ price.market_cap|intword }}</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card p-3">
+            <div class="metric-label">P/E Ratio</div>
+            <div class="metric-value">{{ price.pe_live }}</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card p-3">
+            <div class="metric-label">Ticker</div>
+            <div class="metric-value">{{ company.ticker }}</div>
+        </div>
+    </div>
+</div>
+
+<ul class="nav nav-tabs mb-3" id="myTab" role="tablist">
+    <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#financials">Financial Ratios</a></li>
+    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#income">Income Statement</a></li>
+    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#balance">Balance Sheet</a></li>
+    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#industry">Industry</a></li>
+</ul>
+
+<div class="tab-content" id="myTabContent">
+    
+    <div class="tab-pane fade show active" id="financials">
+        <div class="card p-3">
+            <h5>Financial History</h5>
+            <div class="table-responsive">
+                <table class="table table-dark table-striped table-hover table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            {% for year in ratio_data.years %}
+                                <th class="text-end">{{ year }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>EPS (Basic)</strong></td>
+                            {% for report in ratio_data_objs %} {% endfor %}
+                        </tr>
+                        
+                        {% for metric, values in ratio_data.rows.items %}
+                        <tr>
+                            <td>{{ metric }}</td>
+                            {% for val in values %}
+                                <td class="text-end">{{ val }}</td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-pane fade" id="income">
+        <div class="card p-3">
+            <h5>Annual Income Statement</h5>
+            <div class="table-responsive">
+                <table class="table table-dark table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Items</th>
+                            {% for year in income_data.years %}
+                                <th class="text-end">{{ year }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for metric, values in income_data.rows.items %}
+                        <tr>
+                            <td>{{ metric }}</td>
+                            {% for val in values %}
+                                <td class="text-end">{{ val|intcomma }}</td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-pane fade" id="balance">
+        <div class="card p-3">
+            <h5>Balance Sheet Position</h5>
+            <table class="table table-dark table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Items</th>
+                        {% for year in balance_data.years %}
+                            <th class="text-end">{{ year }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for metric, values in balance_data.rows.items %}
+                    <tr>
+                        <td>{{ metric }}</td>
+                        {% for val in values %}
+                            <td class="text-end">{{ val|intcomma }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="tab-pane fade" id="industry">
+        <div class="card p-3">
+            <h5>Industry Benchmarks</h5>
+            <table class="table table-dark table-bordered" style="width: 50%;">
+                <thead>
+                    <tr>
+                        <th>Metric</th>
+                        <th class="text-end">Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for key, val in industry.items %}
+                    <tr>
+                        <td>{{ key }}</td>
+                        <td class="text-end">{{ val }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
